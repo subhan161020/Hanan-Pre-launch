@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "Hanan-Pre-launch",
+  "name": "pre-launch",
   "compatibility_date": "2026-08-31",
   "observability": {
     "enabled": true
