@@ -74,6 +74,8 @@ p{margin:0 0 1.1em}
   letter-spacing:.34em;text-transform:uppercase;color:var(--gold);
   margin:0 0 1.1rem;display:block;
 }
+.eyebrow.lg{font-size:.92rem;letter-spacing:.3em;margin-bottom:1.3rem}
+@media (max-width:600px){.eyebrow.lg{font-size:.8rem;letter-spacing:.26em}}
 .ar{font-family:var(--arabic);direction:rtl}
 .small{font-size:.82rem;letter-spacing:.03em;color:var(--ink-soft)}
 
@@ -942,8 +944,8 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
           <path d="M8 30c0 16 14 24 30 24 34 0 52-28 78-28 20 0 26 12 46 12 14 0 24-6 30-14"/>
           <rect class="pip" x="112" y="6" width="9" height="9" transform="rotate(45 116 10)"/>
         </svg>
-        <span class="eyebrow">The collection</span>
-        <h2>Two ways to be covered</h2>
+        <span class="eyebrow lg">The collections</span>
+        <h2>For every day, and every occasion</h2>
       </div>
       <div class="tiles" style="margin-top:3rem">
         <button type="button" class="tile t1 rv" data-goto="waitlist">
@@ -1141,7 +1143,7 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
 <section class="page" id="p-shop">
   <div class="wrap"><div class="crumb"><a href="#/">Home</a> / <span id="shopCrumb">Shop all</span></div></div>
   <div class="wrap phead">
-    <span class="eyebrow" id="shopEyebrow">The collection</span>
+    <span class="eyebrow" id="shopEyebrow">The collections</span>
     <h1 id="shopTitle" style="font-size:clamp(2.2rem,5vw,3.6rem)">Shop all</h1>
     <p id="shopBlurb">Every abaya, sizes 52 to 60. Flat measurements published on each product page.</p>
   </div>
@@ -1166,7 +1168,7 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
   </div>
   <section class="sec" style="background:var(--ivory-2);border-top:1px solid var(--line-soft)">
     <div class="wrap">
-      <div class="center" style="margin-bottom:2.6rem"><span class="eyebrow">You may also like</span><h2>More from the collection</h2></div>
+      <div class="center" style="margin-bottom:2.6rem"><span class="eyebrow">You may also like</span><h2>More from the collections</h2></div>
       <div class="grid g4" id="pdpRelated"></div>
     </div>
   </section>
@@ -1340,7 +1342,7 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
         </div>
       </div>
       <div>
-        <h4>The collection</h4>
+        <h4>The collections</h4>
         <ul>
           <li><a href="#/" data-goto="waitlist">Everyday abaya &mdash; soon</a></li>
           <li><a href="#/" data-goto="waitlist">Occasion abaya &mdash; soon</a></li>
@@ -1476,7 +1478,7 @@ function card(p){
 
 /* ---------- shop page ---------- */
 const SHOP_META = {
-  all:      { t:"Shop all",        e:"The collection", b:"Every abaya, sizes 52 to 60. Flat measurements published on each product page." },
+  all:      { t:"Shop all",        e:"The collections", b:"Every abaya, sizes 52 to 60. Flat measurements published on each product page." },
   everyday: { t:"Everyday abaya",  e:"Everyday",       b:"Nida crepe and washed linen, cut to be worn three times a week and still look like new." },
   occasion: { t:"Occasion abaya",  e:"Occasion",       b:"Satin, crepe and pearl for nikkah, walimah and Eid. Made in small runs." },
   nursing:  { t:"Nursing-friendly",e:"For mothers",    b:"Every style here has the concealed Hanan opening set into the front panel seam." }
