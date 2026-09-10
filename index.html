@@ -319,6 +319,62 @@ p{margin:0 0 1.1em}
 .vid.playing .vid-play{opacity:0;pointer-events:none}
 .vid-play:focus-visible{outline:2px solid var(--gold);outline-offset:-4px}
 
+/* custom control bar — native controls collapse the scrubber on small players */
+.vid-ctl{
+  position:absolute;left:0;right:0;bottom:0;z-index:2;
+  display:flex;align-items:center;gap:.55rem;
+  padding:.7rem .8rem;
+  background:linear-gradient(180deg,rgba(44,42,40,0),rgba(44,42,40,.82));
+  opacity:0;transform:translateY(6px);transition:opacity .28s,transform .28s;
+}
+.vid-ctl[hidden]{display:none}      /* the display:flex above would beat the UA rule */
+.vid.playing .vid-ctl,
+.vid-ctl:focus-within{opacity:1;transform:none}
+@media(hover:none){.vid.playing .vid-ctl{opacity:1;transform:none}}
+
+.vc-btn{
+  flex:none;display:grid;place-items:center;width:32px;height:32px;padding:0;
+  background:none;border:0;cursor:pointer;color:var(--brand-ivory);
+  opacity:.9;transition:opacity .2s,color .2s;
+}
+.vc-btn:hover{opacity:1;color:var(--gold-lt)}
+.vc-btn:focus-visible{outline:2px solid var(--gold);outline-offset:2px;border-radius:3px}
+.vc-btn svg{width:20px;height:20px;fill:currentColor;display:block}
+#vcToggle svg{width:22px;height:22px}
+.vc-btn .vc-i-play,.vid.paused .vc-i-pause,.vc-btn .vc-i-off,.vid.muted .vc-i-on{display:none}
+.vid.paused .vc-i-play,.vid.muted .vc-i-off{display:block}
+
+.vc-time{
+  flex:none;font-family:var(--sans);font-size:.66rem;letter-spacing:.08em;
+  color:var(--brand-ivory);opacity:.85;font-variant-numeric:tabular-nums;white-space:nowrap;
+}
+
+.vc-seek{
+  flex:1 1 auto;min-width:60px;height:18px;margin:0;padding:0;
+  background:none;border:0;cursor:pointer;-webkit-appearance:none;appearance:none;
+}
+.vc-seek::-webkit-slider-runnable-track{
+  height:3px;border-radius:2px;
+  background:linear-gradient(90deg,var(--gold) 0 var(--pct,0%),rgba(248,245,240,.75) var(--pct,0%) var(--buf,0%),rgba(248,245,240,.3) var(--buf,0%));
+}
+.vc-seek::-moz-range-track{
+  height:3px;border-radius:2px;
+  background:linear-gradient(90deg,var(--gold) 0 var(--pct,0%),rgba(248,245,240,.75) var(--pct,0%) var(--buf,0%),rgba(248,245,240,.3) var(--buf,0%));
+}
+.vc-seek::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:11px;height:11px;margin-top:-4px;
+  border-radius:50%;background:var(--gold);border:0;
+}
+.vc-seek::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:var(--gold);border:0}
+.vc-seek:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:3px}
+
+@media(max-width:520px){
+  .vid-ctl{gap:.35rem;padding:.55rem}
+  .vc-btn{width:28px;height:28px}
+  .vc-time{font-size:.6rem}
+  #vcMute{display:none}
+}
+
 </style>
 </head>
 <body>
@@ -917,7 +973,7 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
           <video
             id="storyPlayer"
             poster="hanan-story-poster.jpg"
-            preload="none"
+            preload="metadata"
             playsinline
             controlslist="nodownload"
             width="1920" height="1080">
@@ -928,6 +984,29 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
             <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg>
             <span>Watch our story</span>
           </button>
+
+          <div class="vid-ctl" id="storyCtl" hidden>
+            <button type="button" class="vc-btn" id="vcBack" aria-label="Rewind 10 seconds" title="Rewind 10 seconds">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11.5 6.5v11L4 12zM20 6.5v11L12.5 12z"/></svg>
+            </button>
+            <button type="button" class="vc-btn" id="vcToggle" aria-label="Pause" title="Play/pause">
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="vc-i-pause"><path d="M7 5h3.2v14H7zM13.8 5H17v14h-3.2z"/></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="vc-i-play"><path d="M8 5.5v13l11-6.5z"/></svg>
+            </button>
+            <button type="button" class="vc-btn" id="vcFwd" aria-label="Forward 10 seconds" title="Forward 10 seconds">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12.5 6.5v11L20 12zM4 6.5v11L11.5 12z"/></svg>
+            </button>
+            <input class="vc-seek" id="vcSeek" type="range" min="0" max="100" step="0.01" value="0"
+                   aria-label="Seek through the video">
+            <span class="vc-time" id="vcTime">0:00&thinsp;/&thinsp;0:00</span>
+            <button type="button" class="vc-btn" id="vcMute" aria-label="Mute" title="Mute">
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="vc-i-on"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"/><path d="M15.5 9a4 4 0 0 1 0 6" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+              <svg viewBox="0 0 24 24" aria-hidden="true" class="vc-i-off"><path d="M4 9.5h3.5L12 5.5v13L7.5 14.5H4z"/><path d="M15.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>
+            </button>
+            <button type="button" class="vc-btn" id="vcFull" aria-label="Full screen" title="Full screen">
+              <svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>
+            </button>
+          </div>
         </figure>
       </div>
     </div>
@@ -1662,12 +1741,14 @@ function postToMailerLite(fields){
   if(!wrap || !video || !btn) return;
 
   const label = btn.querySelector("span");
+  const ctl   = document.getElementById("storyCtl");
   let guard = null;
 
   function fail(){
     clearTimeout(guard);
     wrap.classList.remove("playing");
-    video.controls = false;
+    const bar = document.getElementById("storyCtl");
+    if(bar) bar.hidden = true;
     if(label) label.textContent = "Video unavailable";
     btn.disabled = true;
   }
@@ -1684,8 +1765,8 @@ function postToMailerLite(fields){
   video.addEventListener("error", () => { if(video.error) fail(); });
 
   btn.addEventListener("click", () => {
-    video.controls = true;           /* native controls appear once playing */
     wrap.classList.add("playing");
+    if(ctl){ ctl.hidden = false; paint(); }
     clearTimeout(guard);
     guard = setTimeout(() => { if(video.readyState < 2) fail(); }, 8000);
     const p = video.play();
@@ -1695,9 +1776,96 @@ function postToMailerLite(fields){
   /* Bring the overlay back when it finishes, so it reads as a poster again */
   video.addEventListener("ended", () => {
     wrap.classList.remove("playing");
-    video.controls = false;
+    if(ctl) ctl.hidden = true;
     video.currentTime = 0;
   });
+
+  /* ---- custom controls: native ones drop the scrubber on a small player ---- */
+  if(!ctl) return;
+  const seek = document.getElementById("vcSeek");
+  const time = document.getElementById("vcTime");
+  const SKIP = 10;
+  let scrubbing = false;
+
+  const clock = s => {
+    if(!isFinite(s)) s = 0;
+    const m = Math.floor(s / 60);
+    return m + ":" + String(Math.floor(s % 60)).padStart(2, "0");
+  };
+
+  function paint(){
+    const d = video.duration;
+    const pct = isFinite(d) && d > 0 ? (video.currentTime / d) * 100 : 0;
+    let buf = 0;
+    for(let i = 0; i < video.buffered.length; i++){
+      if(video.buffered.start(i) <= video.currentTime) buf = video.buffered.end(i);
+    }
+    seek.style.setProperty("--pct", pct + "%");
+    seek.style.setProperty("--buf", (isFinite(d) && d > 0 ? (buf / d) * 100 : 0) + "%");
+    if(!scrubbing) seek.value = String(pct);
+    time.innerHTML = clock(video.currentTime) + "&thinsp;/&thinsp;" + clock(d);
+  }
+
+  const skip = by => {
+    const d = isFinite(video.duration) ? video.duration : Infinity;
+    video.currentTime = Math.max(0, Math.min(video.currentTime + by, d));
+  };
+
+  document.getElementById("vcBack").addEventListener("click", () => skip(-SKIP));
+  document.getElementById("vcFwd").addEventListener("click", () => skip(SKIP));
+
+  const toggle = document.getElementById("vcToggle");
+  toggle.addEventListener("click", () => { video.paused ? video.play() : video.pause(); });
+  video.addEventListener("click", () => { video.paused ? video.play() : video.pause(); });
+
+  const setPlayState = () => {
+    wrap.classList.toggle("paused", video.paused);
+    toggle.setAttribute("aria-label", video.paused ? "Play" : "Pause");
+  };
+  video.addEventListener("play", setPlayState);
+  video.addEventListener("pause", setPlayState);
+
+  const mute = document.getElementById("vcMute");
+  mute.addEventListener("click", () => { video.muted = !video.muted; });
+  video.addEventListener("volumechange", () => {
+    wrap.classList.toggle("muted", video.muted);
+    mute.setAttribute("aria-label", video.muted ? "Unmute" : "Mute");
+  });
+
+  document.getElementById("vcFull").addEventListener("click", () => {
+    if(document.fullscreenElement) document.exitFullscreen();
+    else if(wrap.requestFullscreen) wrap.requestFullscreen();
+    else if(video.webkitEnterFullscreen) video.webkitEnterFullscreen();  /* iPhone Safari */
+  });
+
+  /* Drag the scrubber: seek live, and do not fight timeupdate while held */
+  seek.addEventListener("pointerdown", () => { scrubbing = true; });
+  const release = () => {
+    if(!scrubbing) return;
+    scrubbing = false;
+    paint();
+  };
+  seek.addEventListener("pointerup", release);
+  seek.addEventListener("pointercancel", release);
+  seek.addEventListener("input", () => {
+    const d = video.duration;
+    if(!isFinite(d) || d <= 0) return;
+    video.currentTime = (Number(seek.value) / 100) * d;
+    paint();
+  });
+  seek.addEventListener("change", release);
+
+  /* Arrow keys anywhere in the player, except on the slider (it seeks itself) */
+  wrap.addEventListener("keydown", e => {
+    if(e.target === seek) return;
+    if(e.key === "ArrowLeft"){ skip(-SKIP); e.preventDefault(); }
+    else if(e.key === "ArrowRight"){ skip(SKIP); e.preventDefault(); }
+  });
+
+  ["loadedmetadata","durationchange","timeupdate","progress","seeked"].forEach(
+    ev => video.addEventListener(ev, paint));
+  setPlayState();
+  paint();
 })();
 
 </script>
