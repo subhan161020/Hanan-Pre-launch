@@ -367,6 +367,7 @@ p{margin:0 0 1.1em}
 }
 .vc-seek::-moz-range-thumb{width:11px;height:11px;border-radius:50%;background:var(--gold);border:0}
 .vc-seek:focus-visible{outline:2px solid var(--gold);outline-offset:3px;border-radius:3px}
+.vid.preparing .vc-seek{opacity:.55}
 
 @media(max-width:520px){
   .vid-ctl{gap:.35rem;padding:.55rem}
@@ -1766,7 +1767,7 @@ function postToMailerLite(fields){
 
   btn.addEventListener("click", () => {
     wrap.classList.add("playing");
-    if(ctl){ ctl.hidden = false; paint(); }
+    if(ctl){ ctl.hidden = false; paint(); probe(); }
     clearTimeout(guard);
     guard = setTimeout(() => { if(video.readyState < 2) fail(); }, 8000);
     const p = video.play();
@@ -1779,6 +1780,7 @@ function postToMailerLite(fields){
     if(ctl) ctl.hidden = true;
     video.currentTime = 0;
   });
+
 
   /* ---- custom controls: native ones drop the scrubber on a small player ---- */
   if(!ctl) return;
@@ -1795,7 +1797,8 @@ function postToMailerLite(fields){
 
   function paint(){
     const d = video.duration;
-    const pct = isFinite(d) && d > 0 ? (video.currentTime / d) * 100 : 0;
+    const at = want != null ? want : video.currentTime;
+    const pct = isFinite(d) && d > 0 ? (at / d) * 100 : 0;
     let buf = 0;
     for(let i = 0; i < video.buffered.length; i++){
       if(video.buffered.start(i) <= video.currentTime) buf = video.buffered.end(i);
@@ -1803,13 +1806,91 @@ function postToMailerLite(fields){
     seek.style.setProperty("--pct", pct + "%");
     seek.style.setProperty("--buf", (isFinite(d) && d > 0 ? (buf / d) * 100 : 0) + "%");
     if(!scrubbing) seek.value = String(pct);
-    time.innerHTML = clock(video.currentTime) + "&thinsp;/&thinsp;" + clock(d);
+    time.innerHTML = clock(at) + "&thinsp;/&thinsp;" + clock(d);
   }
 
-  const skip = by => {
-    const d = isFinite(video.duration) ? video.duration : Infinity;
-    video.currentTime = Math.max(0, Math.min(video.currentTime + by, d));
+  /* Seeking needs the host to answer Range requests with 206. Some static
+     hosts return the whole 200 body instead; the browser then restarts the
+     download and playback snaps back to 0 on every forward seek. Detect that
+     and fall back to holding the file in memory, where seeking always works. */
+  const SRC = video.querySelector("source").getAttribute("src");
+  let ranged = null;      /* null = unknown, true = 206 host, false = must localise */
+  let local = null;       /* the in-memory swap, once started */
+  let want = null;        /* seek target parked until the local copy is ready */
+  let seekId = 0;         /* so a stale check cannot misread a later seek */
+
+  const buffered = t => {
+    for(let i = 0; i < video.buffered.length; i++){
+      if(t >= video.buffered.start(i) && t <= video.buffered.end(i)) return true;
+    }
+    return false;
   };
+
+  async function probe(){
+    if(ranged !== null) return;
+    const stop = new AbortController();
+    try{
+      const r = await fetch(SRC, {headers:{Range:"bytes=0-1"}, signal:stop.signal});
+      ranged = r.status === 206;
+      stop.abort();                       /* headers are all we needed */
+    }catch(e){ ranged = true; }           /* can't tell — assume the host is fine */
+    if(ranged === false) localise();
+  }
+
+  function localise(){
+    if(local) return local;
+    wrap.classList.add("preparing");
+    seek.setAttribute("aria-busy", "true");
+    local = fetch(SRC).then(r => r.blob()).then(blob => {
+      const at = want != null ? want : video.currentTime;
+      const running = !video.paused;
+      video.src = URL.createObjectURL(blob);
+      video.addEventListener("loadedmetadata", () => {
+        video.currentTime = at;
+        want = null;
+        if(running) video.play();
+        paint();
+      }, {once:true});
+      video.load();
+      ranged = true;                      /* a blob seeks like a local file */
+    }).catch(() => { local = null; })
+      .finally(() => {
+        wrap.classList.remove("preparing");
+        seek.removeAttribute("aria-busy");
+      });
+    return local;
+  }
+
+  function seekTo(t){
+    const d = video.duration;
+    if(!isFinite(d) || d <= 0) return;
+    t = Math.max(0, Math.min(t, d - 0.05));
+    if(ranged === false && !buffered(t)){
+      want = t;                           /* park it rather than reset to 0 */
+      paint();
+      localise();
+      return;
+    }
+    want = null;
+    video.currentTime = t;
+    verify(t, ++seekId);
+  }
+
+  /* If a seek silently lands back at the start, the host is not serving
+     ranges however the probe read — localise and retry the same target. */
+  function verify(target, id){
+    if(target < 2 || ranged === false) return;
+    setTimeout(() => {
+      if(id !== seekId) return;               /* a newer seek has since happened */
+      if(video.currentTime < 1 && target - video.currentTime > 1.5){
+        ranged = false;
+        want = target;
+        localise();
+      }
+    }, 900);
+  }
+
+  const skip = by => seekTo((want != null ? want : video.currentTime) + by);
 
   document.getElementById("vcBack").addEventListener("click", () => skip(-SKIP));
   document.getElementById("vcFwd").addEventListener("click", () => skip(SKIP));
@@ -1850,7 +1931,7 @@ function postToMailerLite(fields){
   seek.addEventListener("input", () => {
     const d = video.duration;
     if(!isFinite(d) || d <= 0) return;
-    video.currentTime = (Number(seek.value) / 100) * d;
+    seekTo((Number(seek.value) / 100) * d);
     paint();
   });
   seek.addEventListener("change", release);
