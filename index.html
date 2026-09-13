@@ -121,7 +121,8 @@ p{margin:0 0 1.1em}
 
 /* ---------- announcement ---------- */
 .announce{
-  background:var(--ink);color:var(--ivory);position:relative;z-index:60;
+  background:var(--brand-ivory);color:var(--charcoal);position:relative;z-index:60;
+  border-bottom:1px solid var(--line-soft);        /* the header below is ivory too */
   overflow:hidden;touch-action:pan-y
 }
 .ann-view{overflow:hidden}
@@ -133,12 +134,12 @@ p{margin:0 0 1.1em}
   min-height:1.4em;opacity:.94
 }
 .ann-slide a{transition:color .3s}
-.ann-slide a:hover{color:var(--gold-lt);border-color:var(--gold-lt)}
+.ann-slide a:hover{color:var(--gold);border-color:var(--gold)}
 .ann-nav{
   position:absolute;top:0;bottom:0;width:34px;display:grid;place-items:center;
-  color:rgba(248,245,240,.55);transition:color .3s;z-index:2
+  color:rgba(44,42,40,.5);transition:color .3s;z-index:2
 }
-.ann-nav:hover{color:var(--gold-lt)}
+.ann-nav:hover{color:var(--gold)}
 .ann-nav.prev{left:0}
 .ann-nav.next{right:0}
 .ann-nav svg{width:7px;height:11px;fill:none;stroke:currentColor;stroke-width:1.4;
@@ -382,45 +383,40 @@ p{margin:0 0 1.1em}
 <style>
 /* ---------- hero: the word itself is the hero ---------- */
 .hero{
-  position:relative;background:var(--warm-taupe);color:var(--ivory);
+  position:relative;background:var(--brand-ivory);color:var(--charcoal);
   min-height:clamp(560px,84vh,860px);
   min-height:clamp(560px,84dvh,860px);
   display:grid;place-items:center;
   text-align:center;overflow:hidden;padding:6rem var(--pad-safe)
 }
-.hero::before{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(44,42,40,.15));
-}
 .hero-frame{
-  position:absolute;inset:clamp(14px,2.4vw,34px);border:1px solid rgba(248,245,240,.42);
+  position:absolute;inset:clamp(14px,2.4vw,34px);border:1px solid var(--line);
   pointer-events:none
 }
 .hero-mark{
   position:absolute;top:50%;left:50%;transform:translate(-50%,-52%);
-  width:min(78vw,760px);opacity:.13;filter:brightness(0) invert(1);pointer-events:none
+  width:min(78vw,760px);opacity:.07;pointer-events:none
 }
 .hero-in{position:relative;max-width:760px}
-.hero-logo{width:min(56vw,300px);margin:0 auto 2.4rem;
-  filter:brightness(0) invert(1) opacity(.96) drop-shadow(0 8px 26px rgba(44,42,40,.30))}
+.hero-logo{width:min(56vw,300px);margin:0 auto 2.4rem}
 .hero .defn{
   font-family:var(--display);font-style:italic;font-size:clamp(1.28rem,2.9vw,2.15rem);
-  line-height:1.5;color:#F8F5F0;margin:0 0 1.5rem
+  line-height:1.5;color:var(--charcoal);margin:0 0 1.5rem
 }
-.hero .defn b{font-style:normal;font-weight:400;color:#FFFFFF}
+.hero .defn b{font-style:normal;font-weight:400;color:var(--charcoal)}
 .hero .defn .ar{font-size:1.16em;vertical-align:-.03em}
 .hero .defn .pos{font-style:italic;font-size:.58em;opacity:.72;letter-spacing:.05em}
 .hero .defn .heart{font-size:.66em;vertical-align:.1em}
 .hero p.sub{
-  font-size:.95rem;letter-spacing:.06em;color:rgba(248,245,240,.94);
+  font-size:.95rem;letter-spacing:.06em;color:var(--mocha);
   max-width:44ch;margin:0 auto 2.6rem
 }
 .hero-cta{display:flex;gap:.9rem;justify-content:center;flex-wrap:wrap}
 .scrollcue{position:absolute;bottom:2.2rem;left:50%;transform:translateX(-50%);
   font-size:.6rem;letter-spacing:.3em;text-transform:uppercase;
-  color:rgba(248,245,240,.72);display:flex;flex-direction:column;
+  color:var(--ink-soft);display:flex;flex-direction:column;
   align-items:center;gap:.6rem}
-.scrollcue i{width:1px;height:36px;background:linear-gradient(rgba(248,245,240,.9),transparent);
+.scrollcue i{width:1px;height:36px;background:linear-gradient(rgba(44,42,40,.45),transparent);
   animation:cue 2.4s var(--ease) infinite}
 @keyframes cue{0%{transform:scaleY(.2);transform-origin:top}
   50%{transform:scaleY(1);transform-origin:top}
@@ -446,12 +442,6 @@ p{margin:0 0 1.1em}
 }
 
 /* ---------- marquee strip ---------- */
-.strip{background:var(--ivory-2);border-block:1px solid var(--line-soft);
-  padding:1.4rem 0;overflow:hidden}
-.strip-in{display:flex;gap:0;align-items:center;justify-content:center;
-  flex-wrap:wrap;font-size:.66rem;letter-spacing:.24em;text-transform:uppercase;
-  color:var(--ink-soft);padding-inline:var(--pad);text-align:center}
-.strip-in span{white-space:nowrap}
 
 /* ---------- product grid ---------- */
 .grid{display:grid;gap:clamp(18px,2.4vw,34px) clamp(12px,1.8vw,24px);
@@ -947,19 +937,10 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
       <p class="defn"><b class="ar">حَنان</b> &nbsp;&middot;&nbsp; <b>Hanan</b> <span class="pos">(noun)</span><br>Tenderness, compassion, and loving kindness.<br>The gift of a mother&rsquo;s heart. <span class="heart">&#10084;&#65039;</span></p>
       <p class="sub">Timeless abayas for every woman, thoughtfully designed with discreet nursing-friendly features and uncompromising elegance.</p>
       <div class="hero-cta">
-        <a class="btn light" href="#/about">Our story</a>
+        <a class="btn" href="#/about">Our story</a>
       </div>
     </div>
     <div class="scrollcue"><span>Scroll</span><i></i></div>
-  </div>
-
-  <div class="strip">
-    <div class="strip-in">
-      <span>Designed in East London</span><i class="dot"></i>
-      <span>Made in UAE</span><i class="dot"></i>
-      <span>Concealed nursing access</span><i class="dot"></i>
-      <span>30-day exchanges</span>
-    </div>
   </div>
 
   <!-- story teaser — the full telling lives on the About page -->
@@ -1180,7 +1161,7 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
         <h3 style="margin:2.6rem 0 1rem">Designed With Intention</h3>
         <p>At the heart of every HANAN abaya is a concealed vertical opening set into the front panel seam, secured with discreet press-studs beneath a covered placket.</p>
         <p>When closed, the opening becomes part of the abaya's cut. Nothing is visible, and nothing takes away from the silhouette.</p>
-        <p>When needed, it opens to provide comfortable nursing access — without having to undress and without a zip anywhere near your baby.<br>A thoughtful detail, designed to be noticed only when you need it.</p>
+        <p>When needed, it opens to provide comfortable nursing access.<br>A thoughtful detail, designed to be noticed only when you need it.</p>
 
         <h3 style="margin:2.6rem 0 1rem">Made For Every Woman</h3>
         <p>Although HANAN was born from the experience of breastfeeding, it was never intended to be only for breastfeeding mothers.</p>
