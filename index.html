@@ -1112,7 +1112,7 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
           <path d="M12 0c.7 6.4 4.9 10.6 12 12-7.1 1.4-11.3 5.6-12 12-.7-6.4-4.9-10.6-12-12C7.1 10.6 11.3 6.4 12 0z"/>
         </svg>
         <p class="art-close"><span>Elegance in every detail</span></p>
-        <a class="btn light" href="#/" data-goto="waitlist" style="margin-top:2.6rem">Join the waitlist</a>
+        <a class="btn" href="#/" data-goto="waitlist" style="margin-top:2.6rem">Join the waitlist</a>
       </div>
     </div>
   </section>
@@ -1728,8 +1728,31 @@ function scrollToWaitlist(){
   if(el) el.scrollIntoView({ behavior:"smooth", block:"start" });
 }
 
+/* The waitlist sits inside the home page, so reaching it can mean switching
+   page first. Handle the click rather than letting the href change the hash:
+   route() ends with window.scrollTo(0,0), which cancels the smooth scroll and
+   drops the visitor at the top of the page instead. That only bit on the first
+   click — clicking through to a hash the page already has fires no hashchange,
+   so route() never ran and the second click appeared to work. */
+function goToWaitlist(e){
+  if(e){
+    /* leave cmd/ctrl/shift-click alone so the link can still open in a tab */
+    if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
+    e.preventDefault();
+  }
+  const home = document.getElementById("p-home");
+  if(!home) return;
+  if(!home.classList.contains("on")){
+    /* pushState keeps the back button working but fires no hashchange, so the
+       router has to be run by hand. */
+    if(location.hash !== "#/") history.pushState(null, "", "#/");
+    route();
+  }
+  requestAnimationFrame(scrollToWaitlist);   /* after route()'s scrollTo(0,0) */
+}
+
 document.querySelectorAll('[data-goto="waitlist"]').forEach(el =>
-  el.addEventListener("click", scrollToWaitlist));
+  el.addEventListener("click", goToWaitlist));
 
 /* ---- 2. SUBMIT TO MAILERLITE ---------------------------------------------
    MailerLite's endpoint lives on a different domain, so the browser treats
