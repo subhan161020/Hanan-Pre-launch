@@ -1728,8 +1728,31 @@ function scrollToWaitlist(){
   if(el) el.scrollIntoView({ behavior:"smooth", block:"start" });
 }
 
+/* The waitlist sits inside the home page, so reaching it can mean switching
+   page first. Handle the click rather than letting the href change the hash:
+   route() ends with window.scrollTo(0,0), which cancels the smooth scroll and
+   drops the visitor at the top of the page instead. That only bit on the first
+   click — clicking through to a hash the page already has fires no hashchange,
+   so route() never ran and the second click appeared to work. */
+function goToWaitlist(e){
+  if(e){
+    /* leave cmd/ctrl/shift-click alone so the link can still open in a tab */
+    if(e.metaKey || e.ctrlKey || e.shiftKey || e.altKey || e.button) return;
+    e.preventDefault();
+  }
+  const home = document.getElementById("p-home");
+  if(!home) return;
+  if(!home.classList.contains("on")){
+    /* pushState keeps the back button working but fires no hashchange, so the
+       router has to be run by hand. */
+    if(location.hash !== "#/") history.pushState(null, "", "#/");
+    route();
+  }
+  requestAnimationFrame(scrollToWaitlist);   /* after route()'s scrollTo(0,0) */
+}
+
 document.querySelectorAll('[data-goto="waitlist"]').forEach(el =>
-  el.addEventListener("click", scrollToWaitlist));
+  el.addEventListener("click", goToWaitlist));
 
 /* ---- 2. SUBMIT TO MAILERLITE ---------------------------------------------
    MailerLite's endpoint lives on a different domain, so the browser treats
