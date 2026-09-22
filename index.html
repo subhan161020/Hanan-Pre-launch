@@ -318,7 +318,46 @@ p{margin:0 0 1.1em}
 .wl-consent a{border-bottom:1px solid var(--line)}
 .wl-fine{margin-top:1.1rem;font-size:.76rem;line-height:1.6;color:var(--ink-2);text-align:center}
 #waitMsg{min-height:1.3em;margin-top:.9rem;text-align:center;font-size:.88rem}
-.wl-form.sent{opacity:.55;pointer-events:none}
+
+/* Sent, but the success panel did not take over (JS half-failed): fade only the
+   controls, never the whole form -- a child can't out-opacity a faded parent. */
+.wl-form.sent{pointer-events:none}
+.wl-form.sent .wl-row,.wl-form.sent .wl-field,.wl-form.sent .wl-set,
+.wl-form.sent .wl-consent,.wl-form.sent #waitBtn,.wl-form.sent .wl-fine{opacity:.4}
+.wl-form.sent #waitMsg{
+  font-family:var(--display);font-size:clamp(1.05rem,2.2vw,1.25rem);
+  line-height:1.4;color:var(--ink);margin-top:1.3rem;
+}
+
+/* ---------- waitlist: success panel (replaces the form) ---------- */
+.wl-done{
+  max-width:34rem;margin:clamp(2rem,4vw,2.8rem) auto 0;
+  padding:clamp(2rem,5vw,2.8rem) clamp(1.4rem,4vw,2.4rem);
+  text-align:center;background:var(--white);border:1px solid var(--line);
+  animation:wlDone .6s var(--ease) both;
+}
+.wl-done:focus{outline:none}
+.wl-done:focus-visible{outline:2px solid var(--gold);outline-offset:3px}
+.wl-done-mark{
+  display:block;width:54px;height:54px;margin:0 auto 1.35rem;
+  fill:none;stroke:var(--gold);stroke-width:1.25;
+  stroke-linecap:round;stroke-linejoin:round;
+}
+.wl-done-mark circle{opacity:.4}
+.wl-done-mark path{stroke-dasharray:34;stroke-dashoffset:34;
+  animation:wlTick .55s var(--ease) .3s forwards}
+.wl-done h3{
+  margin:0;font-family:var(--display);font-weight:300;
+  font-size:clamp(1.55rem,3.6vw,2.05rem);line-height:1.22;color:var(--ink);
+}
+.wl-done p{
+  margin:.9rem auto 0;max-width:38ch;font-family:var(--sans);
+  font-size:clamp(.92rem,1.7vw,1rem);line-height:1.65;color:var(--ink-2);
+  text-wrap:balance;
+}
+@keyframes wlDone{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes wlTick{to{stroke-dashoffset:0}}
+@media(prefers-reduced-motion:reduce){.wl-done-mark path{stroke-dashoffset:0}}
 
 
 /* ================= PRE-LAUNCH: story video ================= */
@@ -1097,6 +1136,17 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
           <p class="form-note" id="waitMsg" role="status" aria-live="polite"></p>
           <p class="wl-fine">No spam, no sharing your details with anyone else. Two or three emails before we open, then only when there is something worth telling you.</p>
         </form>
+
+        <!-- Takes the form's place on success. Sibling of the form, not a child,
+             so it stays visible and announceable once the form is hidden. -->
+        <div class="wl-done" id="waitDone" role="status" aria-live="polite" tabindex="-1" hidden>
+          <svg class="wl-done-mark" viewBox="0 0 48 48" aria-hidden="true">
+            <circle cx="24" cy="24" r="22"/>
+            <path d="M15 24.5l6.5 6.5L33 18"/>
+          </svg>
+          <h3>You are on the list.</h3>
+          <p>We will email you before anyone else.</p>
+        </div>
       </div>
     </div>
   </section>
@@ -1822,7 +1872,19 @@ function postToMailerLite(fields){
   const form = document.getElementById("waitForm");
   const msg  = document.getElementById("waitMsg");
   const btn  = document.getElementById("waitBtn");
+  const done = document.getElementById("waitDone");
   if(!form) return;
+
+  // Retire the form and put the confirmation in its place. Focus moves to the
+  // panel so it is announced, and so focus does not fall off the hidden button.
+  const showDone = () => {
+    if(!done) return;
+    form.hidden = true;
+    done.hidden = false;
+    done.focus({preventScroll:true});
+    const still = matchMedia("(prefers-reduced-motion:reduce)").matches;
+    done.scrollIntoView({block:"center", behavior: still ? "auto" : "smooth"});
+  };
 
   const say = (text, ok) => {
     msg.textContent = text;
@@ -1862,6 +1924,7 @@ function postToMailerLite(fields){
       });
       form.classList.add("sent");
       say("You are on the list. We will email you before anyone else.", true);
+      showDone();
     }catch(err){
       btn.disabled = false;
       say("Something went wrong. Please try again, or email hanan.Tmodesty@gmail.com.", false);
