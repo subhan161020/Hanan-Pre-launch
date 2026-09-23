@@ -739,20 +739,6 @@ td:first-child{font-family:var(--display);font-size:1.15rem;color:var(--gold-dp)
 .filters button:hover{border-color:var(--gold);color:var(--gold-dp)}
 .filters button.on{background:var(--ink);color:var(--ivory);border-color:var(--ink)}
 
-/* ---------- build notes (delete before launch) ---------- */
-#notes-tab{position:fixed;right:0;bottom:22px;z-index:90;background:var(--gold);
-  color:#fff;font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;
-  padding:.85em 1.1em;writing-mode:vertical-rl;box-shadow:0 6px 24px -8px rgba(0,0,0,.4)}
-#notes{position:fixed;right:14px;bottom:14px;z-index:91;width:min(92vw,410px);
-  max-height:74vh;overflow-y:auto;background:var(--ivory);border:1px solid var(--gold);
-  padding:1.5rem;display:none;box-shadow:0 26px 60px -26px rgba(44,42,40,.55)}
-#notes.on{display:block}
-#notes h4{font-family:var(--sans);font-size:.68rem;letter-spacing:.24em;
-  text-transform:uppercase;color:var(--gold-dp);margin-bottom:.9rem}
-#notes ol{padding-left:1.1rem;margin:0;font-size:.82rem;line-height:1.6}
-#notes li{margin-bottom:.75rem}
-#notes code{background:var(--ivory-2);padding:.1em .4em;font-size:.9em}
-
 /* ============================================================
    RESPONSIVE LAYER
    Mobile-first. Everything above is the base (phone) case;
@@ -1450,28 +1436,6 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
   </div>
 </footer>
 
-<!-- ===== BUILD NOTES — delete this block and its CSS before you go live ===== -->
-<button id="notes-tab">Build notes</button>
-<div id="notes">
-  <h4>Pre-launch checklist</h4>
-  <ol>
-    <li><strong>Waitlist is connected to MailerLite.</strong> Test a real signup and check it appears in your MailerLite subscriber list before relying on it. If you ever rebuild the MailerLite form, its action URL will change — update <code>WAITLIST_ENDPOINT</code> near the bottom of the file to match.</li>
-    <li><strong>Register with the ICO</strong> (&pound;52/yr, tier&nbsp;1) <em>before</em> the first email address arrives. Add a cookie banner if you add analytics.</li>
-    <li><strong>Privacy policy is written</strong> and lives at <code>#/privacy</code> (<code>#/policies</code> also works). Re-check it if you ever add analytics or a second processor.</li>
-    <li><strong>Legal identity.</strong> Search for <code>[Your</code> and fill in company name, number and address.</li>
-    <li><strong>Replace the story and photography.</strong> Home and About carry placeholder copy; every silhouette is a placeholder graphic.</li>
-    <li><strong>Announcement bar</strong> still advertises free delivery and 30-day exchanges. Consider swapping those for launch-date messaging while nothing is for sale.</li>
-  </ol>
-  <h4 style="margin-top:1.2rem">When stock lands</h4>
-  <ol>
-    <li>Delete <code>PRELAUNCH_BLOCKED</code> in the router to re-open shop, product and account pages.</li>
-    <li>Restore the menu, bag and account buttons in <code>&lt;header&gt;</code>.</li>
-    <li>Put back the <em>New in</em> and reviews sections &mdash; and only use real reviews. Inventing them is illegal in the UK.</li>
-    <li>Change the tiles from <code>&lt;button data-goto&gt;</code> back to <code>&lt;a href="#/shop?c=..."&gt;</code>.</li>
-    <li>Connect Shopify or Payments before taking money.</li>
-  </ol>
-</div>
-
 <script>
 /* =========================================================
    HANAN — product catalogue
@@ -1755,9 +1719,6 @@ function fakeSubmit(form, msgEl, text){
   });
 }
 fakeSubmit(document.getElementById("loginForm"),   "loginMsg",   "Demo login — connect Shopify customer accounts for the real code.");
-
-/* ---------- build notes ---------- */
-document.getElementById("notes-tab").onclick = () => document.getElementById("notes").classList.toggle("on");
 
 /* ---------- announcement carousel: auto-rotate, arrows, swipe ---------- */
 (function(){
