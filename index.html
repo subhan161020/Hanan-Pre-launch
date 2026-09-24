@@ -173,16 +173,16 @@ p{margin:0 0 1.1em}
 .announce.single .ann-nav{display:none}
 .announce.single .ann-slide{padding-inline:var(--pad-safe)}
 /* pre-launch: the bar holds a single waitlist button. Bold ivory type (8:1 on
-   the mocha) inside a faint champagne hairline. On hover the usual .btn sweep
-   fills it champagne, the line goes solid to match, and the text turns
-   charcoal (5.9:1). */
+   the mocha) inside a faint champagne hairline. On hover the box stays as it
+   is and only the text turns gold. That gold is a shade lighter than
+   --champagne-gold, which is 3.7:1 on the mocha; #D9B47C clears 4.5:1. */
 .announce .ann-slide.ann-slide-cta{opacity:1;padding-block:.55em}
 .announce .ann-cta{
   font-size:clamp(.9rem,2.1vw,1.05rem);font-weight:600;letter-spacing:.22em;line-height:1.3;
   padding:.8em 2.6em;border:1px solid rgba(201,160,99,.55);color:var(--brand-ivory)
 }
-.announce .ann-cta::after{background:var(--champagne-gold)}
-.announce .ann-cta:hover{color:var(--charcoal);border-color:var(--champagne-gold)}
+.announce .ann-cta::after{content:none}
+.announce .ann-cta:hover{color:#D9B47C;border-color:rgba(201,160,99,.55)}
 /* the default gold ring is too close to the mocha to see */
 .announce :focus-visible{outline-color:var(--gold-lt)}
 .ann-nav{
