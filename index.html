@@ -172,31 +172,16 @@ p{margin:0 0 1.1em}
 .ann-slide a:hover{color:var(--gold-lt);border-color:var(--gold-lt)}
 .announce.single .ann-nav{display:none}
 .announce.single .ann-slide{padding-inline:var(--pad-safe)}
-/* pre-launch: the bar holds a single waitlist call to action. No box, just
-   bold ivory type (8:1 on the mocha). A champagne underline and arrow (3.7:1)
-   mark it as something to press, and the link fills the bar so a tap anywhere
-   on it counts. */
-.announce .ann-slide.ann-slide-cta{opacity:1;padding:0}
+/* pre-launch: the bar holds a single waitlist button. Bold ivory type (8:1 on
+   the mocha) inside a champagne outline (3.7:1). On hover the usual .btn sweep
+   fills it champagne and the text turns charcoal (5.9:1). */
+.announce .ann-slide.ann-slide-cta{opacity:1;padding-block:.55em}
 .announce .ann-cta{
-  flex:1;align-self:stretch;display:flex;align-items:center;justify-content:center;gap:.8em;
-  padding:.95em var(--pad-safe);
-  font-size:clamp(.9rem,2.1vw,1.05rem);font-weight:600;letter-spacing:.22em;
-  color:var(--brand-ivory);transition:background-color .4s var(--ease)
+  font-size:clamp(.9rem,2.1vw,1.05rem);font-weight:600;letter-spacing:.22em;line-height:1.3;
+  padding:.8em 2.6em;border:2px solid var(--champagne-gold);color:var(--brand-ivory)
 }
-/* the left padding matches the trailing letter-spacing, so the underline
-   sits centred under the letters */
-.announce .ann-cta span{padding:0 0 .3em .22em;border-bottom:1.5px solid var(--champagne-gold)}
-.ann-cta-arrow{flex:none;width:1.6em;height:.75em;fill:none;stroke:var(--champagne-gold);
-  stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;transition:transform .4s var(--ease)}
-.announce .ann-cta:hover{color:var(--brand-ivory)}
-/* mouse only: a tap leaves :hover stuck on touch screens, which would leave
-   the bar tinted after the page has scrolled away to the form */
-@media(hover:hover){
-  .announce .ann-cta:hover{background-color:rgba(248,245,240,.07)}
-  .announce .ann-cta:hover .ann-cta-arrow{transform:translateX(6px)}
-}
-/* inset, or the bar's overflow:hidden clips the ring */
-.announce .ann-cta:focus-visible{outline-offset:-5px}
+.announce .ann-cta::after{background:var(--champagne-gold)}
+.announce .ann-cta:hover{color:var(--charcoal)}
 /* the default gold ring is too close to the mocha to see */
 .announce :focus-visible{outline-color:var(--gold-lt)}
 .ann-nav{
@@ -954,9 +939,7 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
   </button>
   <div class="ann-view">
     <div class="ann-track" id="annTrack">
-      <div class="ann-slide ann-slide-cta">
-        <a class="ann-cta" href="#/" data-goto="waitlist"><span>Join the waitlist</span><svg class="ann-cta-arrow" viewBox="0 0 26 12" aria-hidden="true"><path d="M1 6h23M19 1l5 5-5 5"/></svg></a>
-      </div>
+      <div class="ann-slide ann-slide-cta"><a class="btn ann-cta" href="#/" data-goto="waitlist">Join the waitlist</a></div>
     </div>
   </div>
   <button class="ann-nav next" id="annNext" aria-label="Next announcement">
