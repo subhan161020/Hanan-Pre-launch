@@ -589,11 +589,16 @@ p{margin:0 0 1.1em}
 .tile:hover .tile-img{transform:scale(1.06)}
 /* Occasion's fabric is pale, and ivory type over it drops to about 2:1. Frame
    the photo so the copy sits on the darker wall instead: a slight zoom towards
-   the top moves the fabric's edge below "Coming soon", and on narrower tiles,
-   where the copy fills more of the tile, a closer crop keeps the drape and the
-   arch at the sides. */
+   the top moves the fabric's edge below "Coming soon". Narrower tiles keep the
+   same composition, since the copy fills more of the tile there: a touch more
+   zoom lifts the fabric's peak clear of "Coming soon", and a soft dark glow,
+   like the one on the original artwork's lettering, holds the line ends that
+   cross the lit arch. A closer crop would read better but hides the fabric. */
 .tile-occasion{--zoom:1.15;--focus:60% 8%}
-@media(max-width:1023px){.tile-occasion{--zoom:1.6;--focus:60% 25%}}
+@media(max-width:1023px){
+  .tile-occasion{--zoom:1.25;--focus:58% 4%}
+  .tile-occasion .tile-in{text-shadow:0 0 .18em rgba(44,42,40,.7),0 0 .5em rgba(44,42,40,.45)}
+}
 /* a soft pool of shade behind the copy, so the ivory type holds up on the paler photo */
 .tile::after{content:"";position:absolute;inset:0;z-index:-1;
   background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(44,42,40,.3),rgba(44,42,40,0))}
