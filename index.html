@@ -570,21 +570,47 @@ p{margin:0 0 1.1em}
 .swatches{display:flex;gap:5px;margin-top:.55rem}
 .sw{width:12px;height:12px;border-radius:50%;border:1px solid var(--line-soft)}
 
-/* ---------- collection tiles ---------- */
-.tiles{display:grid;gap:clamp(14px,1.8vw,22px);grid-template-columns:1fr}
+/* ---------- collection tiles ----------
+   The supplied artwork rebuilt in layers: its photograph behind, and its
+   wording and thin frame on top as live text and a border, so both stay crisp
+   and readable at any size. */
+/* 1fr rows keep every tile the height of the tallest, stacked or side by side */
+.tiles{display:grid;gap:clamp(14px,1.8vw,22px);grid-template-columns:1fr;grid-auto-rows:1fr}
 @media(min-width:600px){.tiles{grid-template-columns:repeat(2,1fr)}}
-.tile{position:relative;aspect-ratio:4/5;overflow:hidden;display:grid;
-  place-items:end center;padding:2.2rem 1.4rem;color:var(--ivory);isolation:isolate}
-.tile::before{content:"";position:absolute;inset:0;z-index:-2;transition:transform 1.1s var(--ease)}
-.tile:hover::before{transform:scale(1.06)}
+/* the artwork's shape, but free to grow taller where a narrow tile needs room
+   for the copy: overflow stays visible so aspect-ratio can yield to the content,
+   and stretch overrides the start alignment aspect-ratio items get by default */
+.tile{position:relative;aspect-ratio:1600/1131;align-self:stretch;display:grid;place-items:center;
+  padding:clamp(1.6rem,4.5vw,2.6rem) clamp(1.4rem,4vw,2.4rem);
+  color:var(--ivory);background:var(--mocha);isolation:isolate}
+.tile-media{position:absolute;inset:0;z-index:-2;overflow:hidden}
+.tile-img{display:block;width:100%;height:100%;object-fit:cover;
+  scale:var(--zoom,1);transform-origin:var(--focus,50% 50%);transition:transform 1.1s var(--ease)}
+.tile:hover .tile-img{transform:scale(1.06)}
+/* Occasion's fabric is pale, and ivory type over it drops to about 2:1. Frame
+   the photo so the copy sits on the darker wall instead: a slight zoom towards
+   the top moves the fabric's edge below "Coming soon", and on narrower tiles,
+   where the copy fills more of the tile, a closer crop keeps the drape and the
+   arch at the sides. */
+.tile-occasion{--zoom:1.15;--focus:60% 8%}
+@media(max-width:1023px){.tile-occasion{--zoom:1.6;--focus:60% 25%}}
+/* a soft pool of shade behind the copy, so the ivory type holds up on the paler photo */
 .tile::after{content:"";position:absolute;inset:0;z-index:-1;
-  background:linear-gradient(to top,rgba(44,42,40,.72),rgba(44,42,40,.12) 62%)}
-.tile.t1::before{background:linear-gradient(160deg,#A18F7A,#6E6153)}
-.tile.t2::before{background:linear-gradient(160deg,#5A4631,#2C2A28)}
-.tile.t3::before{background:linear-gradient(160deg,#C9A063,#8B6229)}
-.tile h3{font-size:clamp(1.5rem,2.6vw,2.1rem);margin-bottom:.5rem;text-align:center}
-.tile .link{color:var(--ivory);border-color:rgba(248,245,240,.5)}
-.tile .link:hover{color:var(--gold-lt);border-color:var(--gold-lt)}
+  background:radial-gradient(ellipse 70% 60% at 50% 50%,rgba(44,42,40,.3),rgba(44,42,40,0))}
+/* the artwork's thin ivory frame, inset about 2% as in the originals */
+.tile::before{content:"";position:absolute;inset:clamp(7px,1.1vw,14px);
+  border:1px solid rgba(248,245,240,.6);pointer-events:none}
+.tile h3{font-size:clamp(1.6rem,2.4vw,2.2rem);margin-bottom:.8rem;text-align:center}
+/* --measure is set per tile so each description breaks where the artwork does:
+   it sits midway between the longest line that has to fit and the shortest
+   that must not (Everyday 11.3em / 14em, Occasion 16em / 17.1em) */
+.tile p{font-size:clamp(.84rem,1.1vw,.95rem);letter-spacing:.08em;line-height:1.65;
+  color:rgba(248,245,240,.92);max-width:var(--measure,12.7em);margin:0 auto clamp(1.4rem,3.4vw,2.4rem)}
+/* "Coming soon" over a short rule, in place of a full underline */
+.tile .link{position:relative;display:inline-block;padding-bottom:1.1em;color:var(--ivory);border-bottom-color:transparent}
+.tile .link::after{content:"";position:absolute;left:50%;bottom:0;width:50%;height:1px;
+  background:currentColor;opacity:.75;transform:translateX(-50%)}
+.tile .link:hover{color:var(--gold-lt);border-bottom-color:transparent}
 .tile-in{text-align:center;position:relative}
 
 /* ---------- editorial split ---------- */
@@ -1072,11 +1098,23 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
         <h2>For every day, and every occasion</h2>
       </div>
       <div class="tiles" style="margin-top:3rem">
-        <button type="button" class="tile t1 rv" data-goto="waitlist">
-          <div class="tile-in"><h3>Everyday</h3><span class="link">Coming soon</span></div>
+        <button type="button" class="tile rv" data-goto="waitlist">
+          <span class="tile-media"><img class="tile-img" src="hanan-everyday-photo-v2.webp" width="1600" height="1131"
+               loading="lazy" decoding="async" alt=""></span>
+          <div class="tile-in">
+            <h3>Everyday</h3>
+            <p>Effortless essentials for daily wear, thoughtfully designed with discreet nursing access.</p>
+            <span class="link">Coming soon</span>
+          </div>
         </button>
-        <button type="button" class="tile t3 rv" data-goto="waitlist">
-          <div class="tile-in"><h3>Occasion</h3><span class="link">Coming soon</span></div>
+        <button type="button" class="tile tile-occasion rv" data-goto="waitlist">
+          <span class="tile-media"><img class="tile-img" src="hanan-occasion-photo.webp" width="1600" height="1131"
+               loading="lazy" decoding="async" alt=""></span>
+          <div class="tile-in">
+            <h3>Occasion</h3>
+            <p style="--measure:16.6em">Elevated silhouettes for moments that call for something special, thoughtfully designed with discreet nursing access.</p>
+            <span class="link">Coming soon</span>
+          </div>
         </button>
       </div>
     </div>
@@ -1229,7 +1267,8 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
         <h3 style="margin:2.6rem 0 1rem">Born From A Need</h3>
         <p>HANAN began with a simple need I couldn't find on the market.</p>
         <p>As a breastfeeding mother, I wanted an abaya that gave me full, effortless coverage while allowing me to breastfeed comfortably and discreetly.</p>
-        <p>I searched for something that felt genuinely modest, feminine and elegant — with nursing access that was practical, yet completely concealed within the design.</p>
+        <p>Too often, breastfeeding in an abaya can mean having to lift the garment from the bottom, making feeding awkward and compromising the sense of coverage and modesty we value.</p>
+        <p>I searched for something that felt genuinely modest, feminine and elegant — with nursing access that was practical, discreet and completely concealed within the design.</p>
         <p>I couldn't find it.<br>So I decided to create it.</p>
 
         <h3 style="margin:2.6rem 0 1rem">Designed With Intention</h3>
