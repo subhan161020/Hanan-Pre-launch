@@ -645,7 +645,7 @@ p{margin:0 0 1.1em}
 .tile:hover .tile-img{transform:scale(1.06)}
 /* Occasion's fabric is pale, and ivory type over it drops to about 2:1. Frame
    the photo so the copy sits on the darker wall instead: a slight zoom towards
-   the top moves the fabric's edge below "In November". Narrower tiles keep the
+   the top moves the fabric's edge below "Coming this November". Narrower tiles keep the
    same composition, since the copy fills more of the tile there: a touch more
    zoom lifts the fabric's peak clear of that line, and a soft dark glow,
    like the one on the original artwork's lettering, holds the line ends that
@@ -667,9 +667,9 @@ p{margin:0 0 1.1em}
    that must not (Everyday 11.3em / 14em, Occasion 16em / 17.1em) */
 .tile p{font-size:clamp(.84rem,1.1vw,.95rem);letter-spacing:.08em;line-height:1.65;
   color:rgba(248,245,240,.92);max-width:var(--measure,12.7em);margin:0 auto clamp(1.4rem,3.4vw,2.4rem)}
-/* "In November" over a short rule, in place of a full underline. Keep this line
-   about as short as it is: at "Coming this November" length its ends reach the
-   pale fabric and the lit arch, and drop to about 2:1 on phones. */
+/* "Coming" above "this November", over a short rule, in place of a full
+   underline. Two lines keep it narrow: on one line its ends reach the pale
+   fabric and the lit arch, and drop to about 2:1 on phones. */
 .tile .link{position:relative;display:inline-block;padding-bottom:1.1em;color:var(--ivory);border-bottom-color:transparent}
 .tile .link::after{content:"";position:absolute;left:50%;bottom:0;width:50%;height:1px;
   background:currentColor;opacity:.75;transform:translateX(-50%)}
@@ -1167,7 +1167,7 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
           <div class="tile-in">
             <h3>Everyday</h3>
             <p>Effortless essentials for daily wear, thoughtfully designed with discreet nursing access.</p>
-            <span class="link">In November</span>
+            <span class="link">Coming<br>this November</span>
           </div>
         </button>
         <button type="button" class="tile tile-occasion rv" data-goto="waitlist">
@@ -1176,7 +1176,7 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
           <div class="tile-in">
             <h3>Occasion</h3>
             <p style="--measure:16.6em">Elevated silhouettes for moments that call for something special, thoughtfully designed with discreet nursing access.</p>
-            <span class="link">In November</span>
+            <span class="link">Coming<br>this November</span>
           </div>
         </button>
       </div>
