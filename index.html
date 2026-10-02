@@ -76,7 +76,10 @@
   --wrap:1280px;
   --pad:clamp(20px,5vw,64px);
   --pad-safe:max(var(--pad),env(safe-area-inset-left,0px),env(safe-area-inset-right,0px));
-  --sec:clamp(64px,9vw,132px);
+  /* every section sits on the same ivory, so the bottom padding of one and the
+     top padding of the next read as a single gap: 84px each side is about 170px
+     between sections on desktop */
+  --sec:clamp(64px,9vw,84px);
   --ease:cubic-bezier(.22,.61,.36,1);
 }
 
@@ -291,7 +294,7 @@ p{margin:0 0 1.1em}
 }
 .wl-lede{max-width:52ch;margin:1rem auto 0;color:var(--ink-soft);font-size:clamp(.95rem,1.6vw,1.05rem)}
 .wl-form{margin-top:clamp(2rem,4vw,2.8rem)}
-.wl-row{display:grid;gap:1.1rem;grid-template-columns:1fr}
+.wl-row{display:grid;gap:1.1rem;grid-template-columns:1fr;margin-bottom:1.4rem}
 @media(min-width:620px){.wl-row{grid-template-columns:1fr 1fr;gap:1.2rem}}
 
 .wl-field{display:block;margin-bottom:1.4rem}
@@ -334,6 +337,30 @@ p{margin:0 0 1.1em}
 .wl-consent a{border-bottom:1px solid var(--line)}
 .wl-fine{margin-top:1.1rem;font-size:.76rem;line-height:1.6;color:var(--ink-2);text-align:center}
 #waitMsg{min-height:1.3em;margin-top:.9rem;text-align:center;font-size:.88rem}
+
+/* desktop: the card lost its white fill and border when the page went onto
+   ivory, but kept its padding, which only narrowed the form and added space
+   above and below it. Drop it, widen the form, and size the type and controls
+   up to suit the wider column. scroll-margin keeps the top of the section
+   clear of the sticky header when a "Join the waitlist" link scrolls to it. */
+@media(min-width:1060px){
+  .wl{scroll-margin-top:85px}
+  .wl-card{max-width:52.5rem;padding:0}   /* 840px, growing with the type on large screens */
+  .wl-row{gap:1.5rem;margin-bottom:1.6rem}
+  .wl-field{margin-bottom:1.6rem}
+  .wl-field>span,.wl-set legend{font-size:.76rem;margin-bottom:.7rem}
+  .wl-field input,.wl-field select{padding:1.05rem 1.2rem;font-size:1.06rem}
+  .wl-set{margin:1.7rem 0}
+  .chips{gap:.75rem}
+  .chip span{padding:.8rem 1.6rem;font-size:.92rem}
+  .wl-consent{margin:1.9rem 0 2.1rem}
+  .wl-consent input{width:21px;height:21px;margin-top:3px}
+  .wl-consent span{font-size:.94rem}
+  .wl-consent a{white-space:nowrap}
+  .wl-form .btn{font-size:.8rem;padding-block:1.45em}
+  #waitMsg{font-size:.94rem}
+  .wl-fine{font-size:.84rem;text-wrap:balance}
+}
 
 /* Sent, but the success panel did not take over (JS half-failed): fade only the
    controls, never the whole form -- a child can't out-opacity a faded parent. */
@@ -942,7 +969,7 @@ body{font-size:clamp(15.5px,0.93rem + 0.12vw,17px)}
    resolution. Only the three illustrations are raster images. */
 .feature-art{
   background:var(--brand-ivory);color:var(--charcoal);
-  padding-block:clamp(52px,7vw,104px)
+  padding-block:clamp(52px,7vw,84px)
 }
 .art-title{
   display:flex;align-items:center;gap:clamp(12px,2.5vw,30px);
